@@ -3,16 +3,19 @@ import { SlDrawer } from "react-icons/sl";
 import Button from "./components/Button";
 import Header from "./components/Header";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateTodoModal from "./components/todos/CreateTodoModal";
 import TodoCard from "./components/todos/TodoCard";
 import { useTodo } from "./context/TodoContext";
 import { classNames } from "./utils";
 import Loader from "./components/Loader";
 import TabsHeader from "./components/todos/TabsHeader";
+import { getAllTodos } from "./api";
 
 function App() {
   const { todos, fetchLoading } = useTodo();
+
+  const [todo,setTodo] = useState();
 
   const [createTodoModal, setCreateTodoModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("all");
