@@ -6,6 +6,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
 import { useTodo } from "../../context/TodoContext";
 import toast from "react-hot-toast";
+import { postTodo } from "../../api";
 
 const CreateTodoModal = ({ onClose }) => {
   const { createLoading, createTodo } = useTodo();
@@ -26,8 +27,8 @@ const CreateTodoModal = ({ onClose }) => {
       return;
     }
 
-    await createTodo(title, description);
-
+    await postTodo({title,description})
+    alert("Todo created")
     onClose();
   };
 

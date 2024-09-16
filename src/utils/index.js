@@ -5,7 +5,7 @@ export const requestHandler = async (api, setLoading, onSuccess, onError) => {
   try {
     const response = await api();
     const { data } = response;
-    if (data?.success) {
+    if (response.data?.success) {
       onSuccess(data);
     }
   } catch (error) {
