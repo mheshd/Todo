@@ -8,8 +8,9 @@ import { useTodo } from "../../context/TodoContext";
 import toast from "react-hot-toast";
 import { postTodo } from "../../api";
 
+// why create todo is not using how can we use it
 const CreateTodoModal = ({ onClose }) => {
-  const { createLoading, createTodo } = useTodo();
+  const { createLoading } = useTodo();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -27,8 +28,8 @@ const CreateTodoModal = ({ onClose }) => {
       return;
     }
 
-    await postTodo({title,description})
-    alert("Todo created")
+    await postTodo({ title, description });
+
     onClose();
   };
 

@@ -9,7 +9,7 @@ export const requestHandler = async (api, setLoading, onSuccess, onError) => {
       onSuccess(data);
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Errors:", error);
     if (error.response) {
       console.error("Response error data:", error.response.data);
     } else if (error.request) {

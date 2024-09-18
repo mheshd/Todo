@@ -12,6 +12,7 @@ const TodoContext = createContext({
   fetchLoading: false,
   createTodo: async () => {},
   changeTodo: () => {},
+  deletetodo: () => {},
   getFilteredTodos: async () => {},
 });
 
@@ -26,24 +27,18 @@ const TodoProvider = ({ children }) => {
   const [fetchLoading, setFetchLoading] = useState(false);
 
   // function to create todo
-  const createTodo = async (title, description) => {
-    await requestHandler(
-      async () => await createTodoApi(title, description),
-      setCreateloading,
-      (res) => {
-        const data = res.data;
-        setTodos([data, ...todos]);
-        toast.success(res.message);
-      },
-      (error) => {
-        toast.error(error);
-      }
-    );
+  const deletetodo = (_id) => {
+    const updatedTodos = todos.filter((todo) => todo._id !== _id);
+    setTodos(updatedTodos);
   };
 
   // change todos
-  const changeTodo = (_todos) => {
-    setTodos(_todos);
+  const changeTodo = (updatedTodo) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) =>
+        todo._id === updatedTodo._id ? updatedTodo : todo
+      )
+    );
   };
 
   const getFilteredTodos = async (query = "", isComplete) => {
@@ -83,7 +78,7 @@ const TodoProvider = ({ children }) => {
       value={{
         todos,
         createLoading,
-        createTodo,
+        deletetodo,
         changeTodo,
         loading,
         fetchLoading,

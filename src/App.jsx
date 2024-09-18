@@ -15,8 +15,6 @@ import { getAllTodos } from "./api";
 function App() {
   const { todos, fetchLoading } = useTodo();
 
-  const [todo,setTodo] = useState();
-
   const [createTodoModal, setCreateTodoModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState("all");
   const [query] = useState(""); // for searching (coming soon)

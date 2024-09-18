@@ -4,12 +4,12 @@ import { RxCross2 } from "react-icons/rx";
 import Input from "../Input";
 import Button from "../Button";
 import { MdEdit } from "react-icons/md";
-import { requestHandler } from "../../utils";
 import toast from "react-hot-toast";
 import { useTodo } from "../../context/TodoContext";
+import axios from "axios";
 
 const DetailAndEditModal = ({ onClose, todo }) => {
-  const { todos, changeTodo } = useTodo();
+  const { changeTodo } = useTodo();
   const [isEditing, setIsEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const inputRef = useRef(null);
@@ -18,35 +18,38 @@ const DetailAndEditModal = ({ onClose, todo }) => {
   const [description, setDescription] = useState("");
 
   const onSubmit = async (e) => {
-    e.stopPropagation();
     e.preventDefault();
+    e.stopPropagation();
 
-    if (title.length < 1) {
-      toast.error("Please Enter Valid Title!");
+    if (title.trim().length < 1) {
+      toast.error("Please Enter a Valid Title!");
       return;
     }
 
-    if (description.length < 1) {
-      toast.error("Please Enter Valid Description!");
+    if (description.trim().length < 1) {
+      toast.error("Please Enter a Valid Description!");
       return;
     }
 
-    await requestHandler(
-      async () => await editTodo(todo._id, { title, description }),
-      setEditLoading,
-      (res) => {
-        const { data } = res;
-        const result = todos?.map((todo) =>
-          todo._id === data._id ? { ...data } : todo
-        );
-        changeTodo(result);
-        toast.success(res.message);
-        onClose();
-      },
-      (error) => {
-        toast.error(error);
-      }
-    );
+    try {
+      setEditLoading(true);
+
+      const { data } = await axios.patch(
+        `https://api.freeapi.app/api/v1/todos/${todo._id}`,
+        { description, title },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      toast.success("Todo updated successfully!");
+
+      changeTodo(data); // Ensure this updates the specific todo in the todos list a
+
+      onClose();
+    } catch (error) {
+      toast.error("Failed to update the Todo. Please try again.");
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -107,7 +110,7 @@ const DetailAndEditModal = ({ onClose, todo }) => {
                 loading={editLoading}
               >
                 <MdEdit />
-                Edit
+                save
               </Button>
             </div>
           </form>

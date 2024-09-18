@@ -3,67 +3,43 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaCheck, FaSpinner } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
-import { deleteTodoApi, toggleTodoStatusApi } from "../../api";
 import { useTodo } from "../../context/TodoContext";
-import { classNames, requestHandler } from "../../utils";
+import { classNames } from "../../utils";
 import DetailAndEditModal from "./DetailAndEditModal";
+import axios from "axios";
 
 const TodoCard = ({ todo }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const { changeTodo, todos } = useTodo();
+  const { changeTodo, deletetodo } = useTodo();
   const [isEditModal, setIsEditModal] = useState(false);
 
   const toggleTodoStatus = async (e) => {
     e.stopPropagation();
+    try {
+      const response = await axios.patch(
+        `https://api.freeapi.app/api/v1/todos/toggle/status/${todo._id}`
+      );
 
-    const updatedTodos = todos.map((_todo) =>
-      _todo._id === todo._id
-        ? { ..._todo, isComplete: !_todo.isComplete }
-        : _todo
-    );
-
-    changeTodo(updatedTodos);
-
-    await requestHandler(
-      async () => await toggleTodoStatusApi(todo._id),
-      null,
-      (res) => {
-        const { data } = res;
-
-        const updatedTodos = todos.map((_todo) =>
-          _todo._id === data._id
-            ? { ..._todo, isComplete: data.isComplete }
-            : _todo
-        );
-
-        changeTodo(updatedTodos);
-      },
-      (error) => {
-        toast.error(error);
-      }
-    );
+      toast.success("Todo toogle succes successfully!");
+      changeTodo(response);
+    } catch (error) {
+      toast.error(error);
+    }
   };
 
   const deleteTodoHandler = async (e) => {
     e.stopPropagation();
-    await requestHandler(
-      async () => await deleteTodoApi(todo._id),
-      setDeleteLoading,
-      (res) => {
-        const { data } = res;
+    try {
+      setDeleteLoading(true);
+      const data = await axios.delete(
+        `https://api.freeapi.app/api/v1/todos/${todo._id}`
+      );
+      toast.success("Todo delete succes successfully!");
 
-        const updatedTodos = todos.filter(
-          (todo) => todo._id !== data.deletedTodo._id
-        );
-
-        changeTodo(updatedTodos);
-
-        toast.success(res.message);
-      },
-      (error) => {
-        toast.error(error);
-      }
-    );
+      deletetodo(data);
+    } catch (error) {
+      console.error("error on fetchin on delete");
+    }
   };
 
   return (

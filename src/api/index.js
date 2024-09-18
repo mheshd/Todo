@@ -5,28 +5,43 @@ import axios from "axios";
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,
   withCredentials: true,
-  timeout: 120000,
 });
-
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 // Functions to create axios instance
-const createTodoApi =  (title, description) => {
-  apiClient.post(
-    "/todos",
-    { title, description },
-    { headers: { "Content-Type": "application/json" } }
-  ).then((res)=>console.log(res));
+// const createTodoApi = (title, description) => {
+//   apiClient
+//     .post(
+//       "/todos",
+//       { title, description },
+//       { headers: { "Content-Type": "application/json" } }
+//     )
+//     .then((res) => console.log("todo create", res));
+// };
+
+const createTodoApi = async (title, description) => {
+  try {
+    const response = await apiClient.post(
+      "/todos",
+      { title, description },
+      { headers: { "Content-Type": "application/json" } }
+    );
+    console.log("todo create", response);
+  } catch (error) {
+    console.error("Error creating todo", error);
+  }
 };
 
-export const postTodo = async({title,des}) =>{
-    await axios.post("https://api.freeapi.app/api/v1/todos",{title,des}).then((res)=> console.log(res))
-}
+export const postTodo = async ({ title, description }) => {
+  await axios
+    .post("https://api.freeapi.app/api/v1/todos", { title, description })
+    .then((res) => console.log(" todo post", res));
+};
 
-const getAllTodos = async() => {
-  console.log(baseUrl)
-  const allTodos = await axios.get(baseUrl+"/todos")
+const getAllTodos = async () => {
+  console.log(baseUrl);
+  const allTodos = await axios.get(baseUrl + "/todos");
   return allTodos;
 };
 
